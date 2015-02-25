@@ -27,7 +27,6 @@ session = requests.Session()
 # query.do()
 
 user = User(config.USERNAME, config.PASSWORD, session)
-print user.login()
 
 # 收尾工作
 ferr.close()

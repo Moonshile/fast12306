@@ -35,11 +35,20 @@ class User:
         self.init_url = 'https://kyfw.12306.cn/otn/login/init'
         self.token_compute_url = 'http://www.goondream.com/qianxi/computekey/'
         self.login_url = 'https://kyfw.12306.cn/otn/login/loginAysnSuggest'
+        self.passenger_url = 'https://kyfw.12306.cn/otn/confirmPassenger/getPassengerDTOs'
         self.init_pattern = re.compile(r'<script\s+src="(/otn/dynamicJs/.+)"\s+type="text/javascript"\s+xml:space="preserve">\s*</script>\s+</head>')
         self.key_pattern = re.compile(r'function\s+gc\(\)\s*{\s*var\s+key\s*=\s*\'(.+)\'\s*;var\s+value\s*=')
         self.captcha = Captcha(session)
         self.token_key = self.retrieve_token_key()
         self.token_value = self.retrieve_token_value(self.token_key)
+
+        # 最后再登录
+        if self.login():
+            print u'登录成功~耶~'
+            self.passengers = self.retrieve_passengers()
+        else:
+            print u'糟了，被发现是在刷票了，过一会重新启动程序试试~'
+            time.sleep(settings.QUERY_INTERVAL)
 
     @retry()
     def retrieve_token_key(self):
@@ -73,6 +82,7 @@ class User:
 
     @retry(times=4)
     def login(self):
+        print u'正打算登录...'
         self.captcha.get()
         code = raw_input(u"输入验证码: ".encode('gbk'))
         while not self.captcha.check(code):
@@ -91,3 +101,13 @@ class User:
             logging.debug(u'loginAysnSuggest return %s' % data)
             return data['status'] and data['data'].get('loginCheck', None) == 'Y'
         raise Exception('Fail to login')
+
+    @retry()
+    def retrieve_passengers(self):
+        res = self.session.get(self.passenger_url, timeout=settings.TIMEOUT, verify=settings.VERIFY)
+        if res.status_code == 200:
+            data = res.json()
+            if data['status']:
+                return data['data']['normal_passengers']
+        raise Exception('Fail to retrieve passengers')
+
