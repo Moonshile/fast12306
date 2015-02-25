@@ -3,12 +3,12 @@
 # Basic settings
 TIMEOUT = 5
 VERIFY = False
-STATION_NAME_FILE = 'station_name.js'
-ERR_LOG_FILE = 'err.log'
-LOGGING_FILE = 'requests.log'
-CAPTCHA_FILE = 'captcha.png'
-CRYPTO_JS = 'crypto.js' # 可恶的12306弄了一个很复杂的键值算法，全放这里了
-CRYPTO_SCRIPT = 'do_crypto.js'
+STATION_NAME_FILE = 'data/station_name.js'
+ERR_LOG_FILE = 'log/err.log'
+LOGGING_FILE = 'log/requests.log'
+CAPTCHA_FILE = 'data/captcha.png'
+CRYPTO_JS = 'data/crypto.js' # 可恶的12306弄了一个很复杂的键值算法，全放这里了
+CRYPTO_SCRIPT = 'data/do_crypto.js'
 
 # Query settings
 QUERY_INTERVAL = 1

@@ -74,10 +74,10 @@ class User:
     @retry(times=4)
     def login(self):
         self.captcha.get()
-        code = raw_input(u"输入验证码:".encode('gbk'))
+        code = raw_input(u"输入验证码: ".encode('gbk'))
         while not self.captcha.check(code):
             self.captcha.get()
-            code = raw_input(u"输入新的验证码:".encode('gbk'))
+            code = raw_input(u"输入新的验证码: ".encode('gbk'))
         parameters = [
             (settings.LOGIN_NS + '.user_name', self.username),
             (settings.USER_NS + '.password', self.password),

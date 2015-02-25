@@ -1,8 +1,12 @@
 #coding=utf-8
 
+import os
+
+if not os.path.isdir('log'):
+    os.mkdir('log')
+
 import requests
 import time
-import os
 import json
 import sys
 
