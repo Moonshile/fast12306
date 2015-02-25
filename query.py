@@ -71,15 +71,17 @@ class Query:
                     t['seat_type'] = self.seats[i]
                     return i
             return 10000
+        # ensure that every train has set attribute 'seat_type'
+        for t in self.options:
+            find(t)
         def compare_train(x, y):
             xi = find(x)
             yi = find(y)
             if len(config.SEATS) == 0 or xi == yi:
+                if x['queryLeftNewDTO']['lishi'] == y['queryLeftNewDTO']['lishi']:
+                    return 1 if x['date'] > y['date'] else -1
                 return 1 if x['queryLeftNewDTO']['lishi'] > y['queryLeftNewDTO']['lishi'] else -1
             return xi - yi;
-        # ensure that every train has set attribute 'seat_type'
-        for t in self.options:
-            find(t)
         self.options.sort(compare_train)
         return True if len(self.options) > 0 else False
 

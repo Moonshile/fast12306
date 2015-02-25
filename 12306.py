@@ -23,8 +23,8 @@ sys.stderr = ferr
 # 开始工作！
 session = requests.Session()
 
-# query = Query(session)
-# query.do()
+query = Query(session)
+query.do()
 
 user = User(config.USERNAME, config.PASSWORD, session)
 
