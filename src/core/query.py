@@ -1,6 +1,6 @@
 #coding=utf-8
 
-from StationName import ensure_has_stations
+from fetch import FetchJson
 
 class Query:
 
@@ -11,37 +11,53 @@ class Query:
         self.tdjk = train_data_json_key
 
     def query_once(self, from_station, to_station, purpose_codes, date, date_priority):
+        """
+
+        :param from_station: From station of ticket
+        :param to_station: To station of ticket
+        :param purpose_codes: Purpose codes of ticket
+        :param date: Date of ticket
+        :param date_priority: Priority of the date, in fact, it's index of the date in configuration
+        """
+        
         parameters = [
             (self.query_args_ns + '.train_date', date),
             (self.query_args_ns + '.from_station', from_station),
             (self.query_args_ns + '.to_station', to_station),
             ('purpose_codes', purpose_codes),
         ]
-        res = self.session.get(self.url, params=parameters, timeout=settings.TIMEOUT, verify=settings.VERIFY)
-        assert res.status_code == 200
-        d = res.json()
-        assert d['status']
-        trains = d['data']
+        assertions = [
+            (['status'], True),
+        ]
+        part = ['data']
+        trains = FetchJson(self.session).fetch(self.url, 
+            params=parameters, assertions=assertions, part=part)
         for t in trains:
             t['date'] = date
             t['date_priority'] = date_priority
         return trains
 
     def filter(self, trains, op_trains, seats, op_seats):
+        """
+
+        :param trains: List of queried trains
+        :param op_trains: Optional trains that the user configured
+        :param seats: Seat codes that map names of seat type to their codes
+        :param op_trains: Optional seat types that the user configured
+        """
+
         op_trains_new = op_trains or map(lambda t: t[self.tdjk]['station_train_code'], trains)
         op_seats_new = op_seats or seats.values()
         def seat_status(t):
             return map(lambda s: t[self.tdjk]['%s_num' % s] not in [u'--', u'无'], op_seats_new)
         res = filter(
             lambda t: any(seat_status(t)) and t[self.tdjk]['station_train_code'] in op_trains_new,
-            self.trains
+            trains
         )
         for t in res:
             t['seat_priority'] = seat_status(t).index(True)
             t['seat_type'] = op_seats_new[t['seat_priority']]
         def compare_train(x, y):
-            xi = find(x)
-            yi = find(y)
             if op_seats or x['seat_priority'] == y['seat_priority']:
                 if x[self.tdjk]['lishi'] == y[self.tdjk]['lishi']:
                     return 1 if x['date_priority'] > y['date_priority'] else -1

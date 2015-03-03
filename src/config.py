@@ -1,0 +1,11 @@
+#coding=utf-8
+
+USERNAME = 'Raindai'
+PASSWORD = 'dkq0120DKG'
+PASSENGERS = ['420321199010200741']
+TRAIN_DATE = ['2015-04-24', '2015-04-28']
+FROM_STATION = '十堰'
+TO_STATION = '北京'
+TYPE = '普通'
+TRAINS = ['Z96', 'T10', 'K118', 'K590', 'K262', 'K280']
+SEATS = ['硬卧', '硬座']

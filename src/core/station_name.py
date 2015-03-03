@@ -1,6 +1,7 @@
 #coding=utf-8
 
 import os
+from fetch import FetchFile
 
 class StationName:
 
@@ -26,17 +27,5 @@ class StationName:
         return data
 
     def update(self):
-        res = self.session.get(self.url)
-        assert res.status_code == 200
-        with open(self.station_name_file, 'w') as f:
-            f.write(res.content.partition('=')[2].strip("'"))
-
-    # decorator to ensure has stations saved
-    def ensure_has_stations(sn):
-        def decorator(funcs):
-            def inner(*args, **kwargs):
-                if not os.path.isfile(sn.station_name_file):
-                    sn.update()
-                return funcs(*args, **kwargs)
-            return inner
-        return decorator
+        FetchFile(self.session).fetch(self.station_name_file, self.url,
+            func=lambda x: x.partition('=')[2].strip("'"))
