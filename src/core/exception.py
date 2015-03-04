@@ -40,6 +40,11 @@ class HttpContentNoMatches(FatalException):
             info = '%s\n URL parameters: %s' % (info, unicode(params))
         super(HttpContentNoMatches, self).__init__(info, 202)
 
+class RetryOutOfTimes(FatalException):
+
+    def __init__(self, times):
+        super(RetryOutOfTimes, self).__init__('Time limit is %d' % times, 203)
+
 
 
 
