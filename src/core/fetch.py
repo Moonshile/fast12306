@@ -26,7 +26,7 @@ class FetchJson(FetchBase):
         for (keys, value) in assertions:
             actual = reduce(lambda res, k: res[k], keys, dict_data)
             if actual != value:
-                raise AssertionsFailedForJson(keys, value)
+                raise AssertionsFailedForJson(keys, actual)
 
     def fetch(self, url, params=None, method='get', assertions=[], part=[]):
         """

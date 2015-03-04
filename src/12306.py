@@ -7,7 +7,7 @@ import logging
 
 import config
 
-from core import settings, Query, Captcha, Token
+from core import settings, Query, Captcha, Token, User
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -26,10 +26,19 @@ session = requests.Session()
 session.timeout = settings.TIMEOUT
 session.verify = settings.VERIFY
 
-t = Token(session, 'https://kyfw.12306.cn/')
-key = t.retrieve_key('https://kyfw.12306.cn/otn/login/init')
+c = Captcha(session, settings.CAPTCHA_FILE)
+c.get(settings.URLS['login_captcha'])
+code = raw_input()
+print c.check(settings.URLS['check_captcha'], code)
+
+t = Token(session, settings.URL_BASE)
+key = t.retrieve_key(settings.URLS['login_token'])
 value = t.retrieve_value(key)
 print key, value
+
+u = User(session, config.USERNAME, config.PASSWORD, settings.LOGIN_NS, settings.USER_NS)
+print u.login(settings.URLS['login'], code, key, value)
+print u.passengers(settings.URLS['passengers'])
 
 if ferr:
     # tear down

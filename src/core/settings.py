@@ -55,12 +55,12 @@ URLS = {
     'query': URL_BASE + 'otn/leftTicket/queryT',
     'login_captcha': URL_BASE + 'otn/passcodeNew/getPassCodeNew?module=login&rand=sjrand',
     'check_captcha': URL_BASE + 'otn/passcodeNew/checkRandCodeAnsyn',
+    'login_token': URL_BASE + 'otn/login/init',
+    'login': URL_BASE + 'otn/login/loginAysnSuggest',
+    'passengers': URL_BASE + 'otn/confirmPassenger/getPassengerDTOs',
 }
 
 # 3rd party tools settings
-
-# to execute javascript file
-PHANTOMJS_PATH = 'phantomjs-2.0.0-windows/bin/phantomjs.exe'
 
 # Setup for settings
 
