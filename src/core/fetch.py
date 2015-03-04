@@ -67,7 +67,8 @@ class FetchFile(FetchBase):
         if r.status_code == 200:
             with open(filename, 'wb') as f:
                 f.write(func(r.content) if func else r.content)
-        raise HttpStatusNotOK(r.status_code, url, params)
+        else:
+            raise HttpStatusNotOK(r.status_code, url, params)
 
 
 class FetchSlice(FetchBase):

@@ -48,9 +48,13 @@ SEAT_CODES = {
     '其他': 'qt',
 }
 
+URL_BASE = 'https://kyfw.12306.cn/'
+
 URLS = {
-    'station_name': 'https://kyfw.12306.cn/otn/resources/js/framework/station_name.js?station_version=1.8260',
-    'query': 'https://kyfw.12306.cn/otn/leftTicket/queryT',
+    'station_name': URL_BASE + 'otn/resources/js/framework/station_name.js?station_version=1.8260',
+    'query': URL_BASE + 'otn/leftTicket/queryT',
+    'login_captcha': URL_BASE + 'otn/passcodeNew/getPassCodeNew?module=login&rand=sjrand',
+    'check_captcha': URL_BASE + 'otn/passcodeNew/checkRandCodeAnsyn',
 }
 
 # 3rd party tools settings
@@ -59,6 +63,13 @@ URLS = {
 PHANTOMJS_PATH = 'phantomjs-2.0.0-windows/bin/phantomjs.exe'
 
 # Setup for settings
+
+import socket
+
+if socket.gethostname() in ['duankq-ThinkPad-X201', ]:
+    DEBUG = True
+else:
+    DEBUG = False
 
 import os
 

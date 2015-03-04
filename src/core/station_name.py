@@ -3,7 +3,7 @@
 import os
 from fetch import FetchFile
 
-class StationName:
+class StationName(object):
 
     def __init__(self, session, url, station_name_file):
         self.session = session

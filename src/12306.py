@@ -7,7 +7,7 @@ import logging
 
 import config
 
-from core import settings, Query
+from core import settings, Query, Captcha, Token
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -16,17 +16,21 @@ logging.basicConfig(
     filename=settings.LOGGING_FILE,
 )
 
-# redirect stderr to settings.ERR_LOG_FILE
-ferr = open(settings.ERR_LOG_FILE, 'w')
-sys.stderr = ferr
+ferr = None
+if settings.DEBUG:
+    # redirect stderr to settings.ERR_LOG_FILE
+    ferr = open(settings.ERR_LOG_FILE, 'w')
+    sys.stderr = ferr
 
 session = requests.Session()
 session.timeout = settings.TIMEOUT
 session.verify = settings.VERIFY
-q = Query(session, settings.URLS['query'], settings.QUERY_ARGS_NS, settings.TRAIN_DATA_JSON_KEY)
-res = q.query_once('XFN', 'BXP', 'ADULT', '2015-04-01', 0)
-print map(lambda t: t['queryLeftNewDTO']['station_train_code'], 
-    q.filter(res, config.TRAINS, settings.SEAT_CODES.values, map(lambda s: settings.SEAT_CODES[s], config.SEATS)))
 
-# tear down
-ferr.close()
+t = Token(session, 'https://kyfw.12306.cn/')
+key = t.retrieve_key('https://kyfw.12306.cn/otn/login/init')
+value = t.retrieve_value(key)
+print key, value
+
+if ferr:
+    # tear down
+    ferr.close()

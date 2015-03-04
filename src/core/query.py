@@ -2,7 +2,7 @@
 
 from fetch import FetchJson
 
-class Query:
+class Query(object):
 
     def __init__(self, session, url, query_args_ns, train_data_json_key):
         self.session = session

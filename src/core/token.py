@@ -6,13 +6,14 @@ from fetch import FetchSlice
 
 class Token(object):
 
-    def __init__(self, session):
+    def __init__(self, session, base_url):
         self.session = session
+        self.base_url = base_url
         self.init_url_pattern = re.compile(r'<script\s+src="/(otn/dynamicJs/.+)"\s+type="text/javascript"\s+xml:space="preserve">\s*</script>\s+</head>')
         self.key_pattern = re.compile(r'function\s+gc\(\)\s*{\s*var\s+key\s*=\s*\'(.+)\'\s*;var\s+value\s*=')
         
 
-    def retrieve_key(self, init_url, base_url):
+    def retrieve_key(self, init_url):
         """
 
         :param init_url: URL which contains the link to the js file that contains the token key
@@ -21,7 +22,7 @@ class Token(object):
 
         fs = FetchSlice(self.session)
         url = fs.fetch(self.init_url_pattern, init_url)[0]
-        key = fs.fetch(self.key_pattern, base_url + url)[0]
+        key = fs.fetch(self.key_pattern, self.base_url + url)[0]
         return key
 
     def retrieve_value(self, key):
