@@ -34,6 +34,7 @@ LOGIN_NS = 'loginUserDTO'
 USER_NS = 'userDTO'
 
 PURPOSE_CODES = {'学生': '0X00', '普通': 'ADULT'}
+PURPOSE_ID = {'0X00': 3, '学生': 3, 'ADULT': 1, '普通': 1}
 SEAT_CODES = {
     '商务座': 'swz',
     '特等座': 'tz',
@@ -46,6 +47,19 @@ SEAT_CODES = {
     '硬座': 'yz',
     '无座': 'wz',
     '其他': 'qt',
+}
+SEAT_ID = {
+    'SWZ': '9',
+    'TZ': 'P',
+    'ZY': 'M',
+    'ZE': 'O',
+    'GR': '6',
+    'RW': '4',
+    'YW': '3',
+    'RZ': '2',
+    'YZ': '1',
+    'WZ': 'WZ',
+    'QT': '',
 }
 
 URL_BASE = 'https://kyfw.12306.cn/'
@@ -65,6 +79,7 @@ URLS = {
     'passengers': URL_BASE + 'otn/confirmPassenger/getPassengerDTOs',
     'order_init_submit': URL_BASE + 'otn/leftTicket/submitOrderRequest',
     'order_confirm': URL_BASE + 'otn/confirmPassenger/initDc',
+    'order_check': URL_BASE + 'otn/confirmPassenger/checkOrderInfo',
 }
 
 # 3rd party tools settings
@@ -83,3 +98,7 @@ import os
 for loc in LOCATIONS.values():
     if not os.path.isdir(loc):
         os.mkdir(loc)
+
+for (k, v) in SEAT_CODES.iteritems():
+    SEAT_ID[k] = SEAT_ID[v.upper()]
+    SEAT_ID[v] = SEAT_ID[v.upper()]
