@@ -1,15 +1,20 @@
 #coding=utf-8
 
+import time
+
 from fetch import FetchJson
+from decorators import retry
 
 class Query(object):
 
-    def __init__(self, session, url, query_args_ns, train_data_json_key):
-        self.session = session
+    def __init__(self, session, url, station_names, query_args_ns, train_data_json_key):
+        self.fj = FetchJson(session)
         self.url = url
+        self.sn = station_names
         self.query_args_ns = query_args_ns
         self.tdjk = train_data_json_key
-
+    
+    @retry()
     def query_once(self, from_station, to_station, purpose_codes, date, date_priority):
         """
 
@@ -22,16 +27,22 @@ class Query(object):
         
         parameters = [
             (self.query_args_ns + '.train_date', date),
-            (self.query_args_ns + '.from_station', from_station),
-            (self.query_args_ns + '.to_station', to_station),
+            (self.query_args_ns + '.from_station', self.sn[from_station]),
+            (self.query_args_ns + '.to_station', self.sn[to_station]),
             ('purpose_codes', purpose_codes),
         ]
         assertions = [
             (['status'], True),
         ]
         part = ['data']
-        trains = FetchJson(self.session).fetch(self.url, 
-            params=parameters, assertions=assertions, part=part)
+        cookies = dict(
+            _jc_save_fromStation = from_station,
+            _jc_save_toStation = to_station,
+            _jc_save_fromDate = date,
+            _jc_save_toDate = time.strftime('%Y-%m-%d',time.localtime(time.time())),
+        )
+        trains = self.fj.fetch(self.url, 
+            params=parameters, assertions=assertions, part=part, cookies=cookies)
         for t in trains:
             t['date'] = date
             t['date_priority'] = date_priority

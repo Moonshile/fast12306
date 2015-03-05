@@ -43,7 +43,7 @@ class HttpContentNoMatches(FatalException):
 class RetryOutOfTimes(FatalException):
 
     def __init__(self, times):
-        super(RetryOutOfTimes, self).__init__('Time limit is %d' % times, 203)
+        super(RetryOutOfTimes, self).__init__('Times limit for retrying is %d' % times, 203)
 
 
 

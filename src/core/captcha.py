@@ -11,11 +11,13 @@ class Captcha(object):
     def get(self, url):
         FetchFile(self.session).fetch(self.captcha_file, url)
 
-    def check(self, url, code):
+    def check(self, url, code, repeat_submit_token=None):
         parameters = [
             ('randCode', code),
-            ('rand', 'sjrand'),
+            ('rand', 'randp' if repeat_submit_token else 'sjrand'),
         ]
+        if repeat_submit_token:
+            parameters.append(('REPEAT_SUBMIT_TOKEN', repeat_submit_token))
         assertions = [
             (['status'], True),
         ]

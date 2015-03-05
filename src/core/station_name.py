@@ -23,7 +23,6 @@ class StationName(object):
                 items = s.split('|')
                 for i in items:
                     data[i] = items[2]
-        self.data = data
         return data
 
     def update(self):

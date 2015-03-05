@@ -4,10 +4,11 @@ import requests
 import json
 import sys
 import logging
+import time
 
 import config
 
-from core import settings, Query, Captcha, Token, User
+from core import settings, StationName, Query, Captcha, Token, User, Order
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -22,14 +23,18 @@ if settings.DEBUG:
     ferr = open(settings.ERR_LOG_FILE, 'w')
     sys.stderr = ferr
 
+# preparation
+
 session = requests.Session()
 session.timeout = settings.TIMEOUT
 session.verify = settings.VERIFY
+session.get(settings.URLS['entry'])
+print session.cookies
 
 c = Captcha(session, settings.CAPTCHA_FILE)
 c.get(settings.URLS['login_captcha'])
 code = raw_input()
-print c.check(settings.URLS['check_captcha'], code)
+print 'check: ', c.check(settings.URLS['check_captcha'], code)
 
 t = Token(session, settings.URL_BASE)
 key = t.retrieve_key(settings.URLS['login_token'])
@@ -37,8 +42,31 @@ value = t.retrieve_value(key)
 print key, value
 
 u = User(session, config.USERNAME, config.PASSWORD, settings.LOGIN_NS, settings.USER_NS)
-print u.login(settings.URLS['login'], code, key, value)
-print u.passengers(settings.URLS['passengers'])
+print 'login: ', u.login(settings.URLS['login'], code, key, value)
+ps = u.passengers(settings.URLS['passengers'])
+
+sn = StationName(session, settings.URLS['station_name'], settings.STATION_NAME_FILE)
+stations = sn.read()
+
+q = Query(session, settings.URLS['query'], stations, settings.QUERY_ARGS_NS, settings.TRAIN_DATA_JSON_KEY)
+res = q.query_once(config.FROM_STATION, config.TO_STATION,
+    settings.PURPOSE_CODES[config.TYPE], '2015-04-01', 0)
+res = q.filter(res, config.TRAINS, 
+    settings.SEAT_CODES.values(), map(lambda s: settings.SEAT_CODES[s], config.SEATS))
+print 'lenght of trains: ', len(res)
+
+key = t.retrieve_key(settings.URLS['order_init_token'])
+value = t.retrieve_value(key)
+print key, value
+o = Order(session)
+print session.headers
+#print o.init(settings.URLS['order_init_submit'], key, value, res[0]['secretStr'],
+#    res[0]['date'], settings.PURPOSE_CODES[config.TYPE], config.FROM_STATION, config.TO_STATION)
+
+c.get(settings.URLS['order_captcha'])
+code = raw_input()
+print 'check: ', c.check(settings.URLS['check_captcha'], code, o.token(settings.URLS['order_confirm']))
+
 
 if ferr:
     # tear down

@@ -29,3 +29,8 @@ class User(object):
         part = ['data', 'normal_passengers']
         return self.fj.fetch(url, assertions=assertions, part=part)
 
+    def check(self, url):
+        assertions = [(['status'], True),]
+        part = ['data', 'flag']
+        return self.fj.fetch(url, method='post', assertions=assertions, part=part)
+

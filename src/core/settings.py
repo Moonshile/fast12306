@@ -51,13 +51,20 @@ SEAT_CODES = {
 URL_BASE = 'https://kyfw.12306.cn/'
 
 URLS = {
+    'entry': URL_BASE + 'otn/',
     'station_name': URL_BASE + 'otn/resources/js/framework/station_name.js?station_version=1.8260',
     'query': URL_BASE + 'otn/leftTicket/queryT',
+    'query_log': URL_BASE + 'otn/leftTicket/log',
     'login_captcha': URL_BASE + 'otn/passcodeNew/getPassCodeNew?module=login&rand=sjrand',
+    'order_captcha': URL_BASE + 'otn/passcodeNew/getPassCodeNew?module=passenger&rand=randp',
     'check_captcha': URL_BASE + 'otn/passcodeNew/checkRandCodeAnsyn',
     'login_token': URL_BASE + 'otn/login/init',
+    'order_init_token': URL_BASE + 'otn/leftTicket/init',
     'login': URL_BASE + 'otn/login/loginAysnSuggest',
+    'check_login': URL_BASE + 'otn/login/checkUser',
     'passengers': URL_BASE + 'otn/confirmPassenger/getPassengerDTOs',
+    'order_init_submit': URL_BASE + 'otn/leftTicket/submitOrderRequest',
+    'order_confirm': URL_BASE + 'otn/confirmPassenger/initDc',
 }
 
 # 3rd party tools settings

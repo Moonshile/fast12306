@@ -28,7 +28,7 @@ class FetchJson(FetchBase):
             if actual != value:
                 raise AssertionsFailedForJson(keys, actual)
 
-    def fetch(self, url, params=None, method='get', assertions=[], part=[]):
+    def fetch(self, url, params=None, method='get', assertions=[], part=[], cookies=None):
         """
 
         :param url: URL to fetch json data
@@ -38,7 +38,7 @@ class FetchJson(FetchBase):
         :param part: The part of the fetched json data which should be returned
         """
 
-        r = self.methods[method](url, params=params)
+        r = self.methods[method](url, params=params, cookies=cookies)
         logging.debug(r.content)
         if r.status_code == 200:
             json_data = r.json()
@@ -63,7 +63,7 @@ class FetchFile(FetchBase):
         """
 
         r = self.methods[method](url, params=params)
-        logging.debug(r.content)
+        # logging.debug(r.content)
         if r.status_code == 200:
             with open(filename, 'wb') as f:
                 f.write(func(r.content) if func else r.content)
@@ -78,7 +78,7 @@ class FetchSlice(FetchBase):
 
     def fetch(self, pattern, url, params=None, method='get'):
         r = self.methods[method](url, params=params)
-        logging.debug(r.content)
+        # logging.debug(r.content)
         if r.status_code == 200:
             matches = re.findall(pattern, r.content)
             if len(matches) > 0:
