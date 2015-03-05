@@ -30,6 +30,35 @@ session.timeout = settings.TIMEOUT
 session.verify = settings.VERIFY
 session.get(settings.URLS['entry'])
 
+sn = StationName(session, settings.URLS['station_name'], settings.STATION_NAME_FILE)
+stations = sn.read()
+
+def query_do():
+    q = Query(session, settings.URLS['query'], stations, settings.QUERY_ARGS_NS, settings.TRAIN_DATA_JSON_KEY)
+    i = 0
+    while True:
+        trains = q.query_once(config.FROM_STATION, config.TO_STATION,
+            settings.PURPOSE_CODES[config.TYPE], config.TRAIN_DATE[i], i)
+        if trains:
+            filtered = q.filter(trains, config.TRAINS, 
+                settings.SEAT_CODES.values(), map(lambda s: settings.SEAT_CODES[s], config.SEATS))
+            if filtered:
+                print '\x07'
+            print map(
+                lambda t: '%s %s %s' % (
+                    t[settings.TRAIN_DATA_JSON_KEY]['station_train_code'],
+                    t['date'],
+                    t['seat_type']
+                ),
+                filtered
+            )
+            i = (i + 1)%len(config.TRAIN_DATE)
+        time.sleep(settings.QUERY_INTERVAL)
+
+query_do()
+
+"""
+
 # work
 uname = raw_input('输入12306账户名： ')
 pwd = raw_input('输入密码： ')
@@ -85,6 +114,8 @@ print 'check order: ', o.check(
     token_value=value,
     submit_token=submit_token,
 )
+
+"""
 
 if ferr:
     # tear down
